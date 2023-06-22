@@ -1,4 +1,3 @@
-// routes/index.js
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
@@ -20,8 +19,10 @@ function formatTimestamp() {
     hour12: true,
   };
   const formattedDate = date.toLocaleString('en-US', options).replace(/[^\w]/g, '-');
-  return formattedDate;
+  const nanoseconds = date.getMilliseconds().toString().padStart(3, '0');
+  return `${formattedDate}-${nanoseconds}`;
 }
+
 router.post('/merge-pdf', upload.none(), async (req, res) => {
   const { url1, url2 } = req.body;
 
@@ -51,7 +52,6 @@ router.post('/merge-pdf', upload.none(), async (req, res) => {
     const mergedPdfBytes = await mergedPdf.save();
     const timestamp = formatTimestamp();
     const mergedPdfPath = `uploads/merged_${timestamp}.pdf`;
-    
 
     fs.writeFileSync(mergedPdfPath, mergedPdfBytes);
 
